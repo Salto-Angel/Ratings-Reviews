@@ -1,0 +1,23 @@
+{
+  "name": "ratings-reviews",
+  "version": "1.0.0",
+  "description": "API for ratings and reviews",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salto-Angel/Ratings-Reviews.git"
+  },
+  "author": "William Loo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Salto-Angel/Ratings-Reviews/issues"
+  },
+  "homepage": "https://github.com/Salto-Angel/Ratings-Reviews#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
