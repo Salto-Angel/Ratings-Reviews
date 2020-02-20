@@ -1,4 +1,4 @@
-const controllers = require('./controllers/');
+const controllers = require('./controller.js');
 const router = require('express').Router();
 
 router.get('/:product_id/list', controllers.getReviewsList);
