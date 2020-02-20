@@ -3,7 +3,7 @@ const model = require('./model.js');
 module.exports = {
   getReviewsList: (req, res) => {
     const productID = req.params.product_id;
-    const { page, count, sort } = req.query;
+    const { page = 1, count = 5, sort } = req.query;
     model
       .getReviewsList(productID, page, count, sort)
       .then(reviews => {

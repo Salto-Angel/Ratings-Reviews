@@ -1,9 +1,9 @@
-const db = require('./database/');
+// const db = require('./database/');
 
 module.exports = {
-  getReviewsList: () => {},
-  getMeta: () => {},
-  addReview: () => {},
-  setHelpful: () => {},
-  reportReview: () => {}
+  getReviewsList: (productID, page, count, sort) => {},
+  getMeta: productID => {},
+  addReview: body => {},
+  setHelpful: reviewID => {},
+  reportReview: reviewID => {}
 };
