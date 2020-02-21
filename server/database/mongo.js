@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/reviews', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/reviews', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const photoSchema = mongoose.Schema({
   photo_id: Number,
