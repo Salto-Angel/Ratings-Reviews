@@ -8,20 +8,21 @@ const photoSchema = mongoose.Schema({
 const reviewSchema = mongoose.Schema({
   product_id: Number,
   rating: Number,
-  summary: String,
-  recommend: Number,
-  response: String,
-  body: String,
   date: Date,
-  reviewer_name: String,
-  helpfulness: Number,
+  summary: String,
+  body: String,
+  recommend: String,
   reported: Boolean,
+  reviewer_name: String,
+  reviewer_email: String,
+  response: String,
+  helpfulness: Number,
   photos: [photoSchema]
 });
 
 const charSchema = mongoose.Schema({
-  product_id: Number,
-  characteristic: String,
+  characteristic_id: Number,
+  review_id: Number,
   value: Number
 });
 const ratingsSchema = mongoose.Schema({
