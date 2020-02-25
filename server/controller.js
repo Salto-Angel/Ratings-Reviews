@@ -23,8 +23,14 @@ module.exports = {
     const productID = req.params.product_id;
     model
       .getMeta(productID)
-      .then(meta => {
-        res.json(meta);
+      .then(results => {
+        console.log(results);
+        let finalObj = {
+          ratings: results[0],
+          recommended: results[1],
+          characteristics: results[2]
+        };
+        res.json(finalObj);
       })
       .catch(err => {
         console.log(err, `Error getting meta in server for ${productID}`);

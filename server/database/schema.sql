@@ -37,3 +37,5 @@ CREATE TABLE characteristic_reviews (
   review_id INT,
   value INT
 );
+
+
