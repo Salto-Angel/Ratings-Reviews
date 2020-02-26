@@ -3,7 +3,7 @@ const model = require('./model.js');
 module.exports = {
   getReviewsList: (req, res) => {
     const productID = req.params.product_id;
-    const { page = 1, count = 5, sort } = req.query;
+    const { page = 0, count = 5, sort = 'helpfulness' } = req.query;
     model
       .getReviewsList(productID, page, count, sort)
       .then(reviews => {
@@ -21,10 +21,17 @@ module.exports = {
   },
   getMeta: (req, res) => {
     const productID = req.params.product_id;
+    console.log(req.body);
     model
-      .getMeta(productID)
-      .then(meta => {
-        res.json(meta);
+      .getMeta(req.body, productID)
+      .then(results => {
+        console.log(results);
+        let finalObj = {
+          ratings: results[0],
+          recommended: results[1],
+          characteristics: results[2]
+        };
+        res.json(finalObj);
       })
       .catch(err => {
         console.log(err, `Error getting meta in server for ${productID}`);
@@ -33,7 +40,7 @@ module.exports = {
   addReview: (req, res) => {
     const productID = req.params.product_id;
     model
-      .addReview(req.body)
+      .addReview(req.body, productID)
       .then(() => res.sendStatus(201))
       .catch(err => {
         console.log(err, `Error adding review in server for ${productID}`);
