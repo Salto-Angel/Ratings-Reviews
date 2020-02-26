@@ -21,8 +21,9 @@ module.exports = {
   },
   getMeta: (req, res) => {
     const productID = req.params.product_id;
+    console.log(req.body);
     model
-      .getMeta(productID)
+      .getMeta(req.body, productID)
       .then(results => {
         console.log(results);
         let finalObj = {
@@ -39,7 +40,7 @@ module.exports = {
   addReview: (req, res) => {
     const productID = req.params.product_id;
     model
-      .addReview(req.body)
+      .addReview(req.body, productID)
       .then(() => res.sendStatus(201))
       .catch(err => {
         console.log(err, `Error adding review in server for ${productID}`);
