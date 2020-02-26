@@ -54,7 +54,7 @@ module.exports = {
   },
   addReview: (body, productID) => {
     let addReview =
-      'INSERT INTO reviews(product_id, rating, summary, body, recommend, reviewer_name, reviewer_email) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id';
+      'INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id';
     let addPhotos = 'INSERT INTO photos(review_id, url) VALUES ($1, $2)';
     let addCharacteristics =
       'INSERT INTO characteristic_reviews(characteristic_id, review_id, value) VALUES($1, $2, $3)';
@@ -63,11 +63,15 @@ module.exports = {
         .one(addReview, [
           productID,
           body.rating,
+          body.date || new Date(),
           body.summary,
           body.body,
           body.recommend,
+          0,
           body.name,
-          body.email
+          body.email,
+          '',
+          0
         ])
         .then(data => {
           let reviewID = data.id;

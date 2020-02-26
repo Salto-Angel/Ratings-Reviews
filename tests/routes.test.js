@@ -44,7 +44,7 @@ describe('GET reviews list', () => {
   });
   it('should display an empty array if there are no reviews', () => {
     return request(app)
-      .get('/reviews/2/list')
+      .get('/reviews/3/list')
       .then(res => {
         expect(res.body.results.length).toBe(0);
       });
@@ -75,41 +75,31 @@ describe('GET reviews list', () => {
 describe('GET meta data', () => {
   it('should return results', () => {
     return request(app)
-      .get('/reviews/2/list')
+      .get('/reviews/2/meta')
       .then(res => {
         expect(res.statusCode).toBe(200);
       });
   });
-  it('should return the correct product_id', () => {
+  it('should return the three requisite characteristics', () => {
     return request(app)
-      .get('/reviews/2/list')
+      .get('/reviews/2/meta')
       .then(res => {
-        expect(res.body).toHaveProperty('product');
-        expect(res.body.product).toBe('2');
-      });
-  });
-  it('should return the correct page number', () => {
-    return request(app)
-      .get('/reviews/2/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('page');
-        expect(res.body.page).toBe(0);
-      });
-  });
-  it('should return the correct result count', () => {
-    return request(app)
-      .get('/reviews/2/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('count');
-        expect(res.body.count).toBe(5);
-      });
-  });
-  it('should return an array of reviews', () => {
-    return request(app)
-      .get('/reviews/2/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('results');
-        expect(Array.isArray(res.body.results)).toBe(true);
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            ratings: expect.any(Object),
+            recommended: expect.any(Object),
+            characteristics: expect.any(Object)
+          })
+        );
       });
   });
 });
+
+// Add a review
+describe('POST a review', () => {});
+
+// Update a review's helpfulness
+describe('PUT helpfulness', () => {});
+
+// Report a review
+describe('POST reported', () => {});
