@@ -4,7 +4,14 @@
   "description": "API for ratings and reviews",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/index.js"
+    "start": "nodemon server/index.js",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "repository": {
     "type": "git",
@@ -26,5 +33,9 @@
     "mongoose": "^5.9.1",
     "morgan": "^1.9.1",
     "pg-promise": "^10.4.4"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "supertest": "^4.0.2"
   }
 }
