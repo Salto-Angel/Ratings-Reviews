@@ -21,11 +21,9 @@ module.exports = {
   },
   getMeta: (req, res) => {
     const productID = req.params.product_id;
-    console.log(req.body);
     model
-      .getMeta(req.body, productID)
+      .getMeta(productID)
       .then(results => {
-        console.log(results);
         let finalObj = {
           ratings: results[0],
           recommended: results[1],
