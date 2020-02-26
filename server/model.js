@@ -53,38 +53,36 @@ module.exports = {
     ]);
   },
   addReview: (body, productID) => {
-    let addReview =
-      'INSERT INTO reviews(product_id, rating, summary, body, recommend, reviewer_name, reviewer_email) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id';
-    let addPhotos = 'INSERT INTO photos(review_id, url) VALUES ($1, $2)';
-    let addCharacteristics =
-      'INSERT INTO characteristic_reviews(characteristic_id, review_id, value) VALUES($1, $2, $3)';
-
-    return db.task(task => {
-      return task
-        .one(addReview, [
-          productID,
-          body.rating,
-          body.summary,
-          body.body,
-          body.recommend,
-          body.name,
-          body.email
-        ])
-        .then(data => {
-          let reviewID = data.id;
-          let photoAdditionPromises = body.photos
-            ? body.photos.map(photo => task.none(addPhotos, [reviewID, photo]))
-            : [];
-
-          let addPromises = [...photoAdditionPromises];
-          Object.entries(body.characteristics).forEach((key, value) => {
-            addPromises.push(
-              task.none(addCharacteristics, [key, reviewID, value])
-            );
-          });
-          return Promise.all(addPromises);
-        });
-    });
+    // let addReview =
+    //   'INSERT INTO reviews(product_id, rating, summary, body, recommend, reviewer_name, reviewer_email) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id';
+    // let addPhotos = 'INSERT INTO photos(review_id, url) VALUES ($1, $2)';
+    // let addCharacteristics =
+    //   'INSERT INTO characteristic_reviews(characteristic_id, review_id, value) VALUES($1, $2, $3)';
+    // return db.task(task => {
+    //   return task
+    //     .one(addReview, [
+    //       productID,
+    //       body.rating,
+    //       body.summary,
+    //       body.body,
+    //       body.recommend,
+    //       body.name,
+    //       body.email
+    //     ])
+    //     .then(data => {
+    //       let reviewID = data.id;
+    //       let photoAdditionPromises = body.photos
+    //         ? body.photos.map(photo => task.none(addPhotos, [reviewID, photo]))
+    //         : [];
+    //       let addPromises = [...photoAdditionPromises];
+    //       Object.entries(body.characteristics).forEach((key, value) => {
+    //         addPromises.push(
+    //           task.none(addCharacteristics, [key, reviewID, value])
+    //         );
+    //       });
+    //       return Promise.all(addPromises);
+    //     });
+    // });
   },
   setHelpful: reviewID => {
     return db.none(
