@@ -38,4 +38,11 @@ CREATE TABLE characteristic_reviews (
   value INT NOT NULL
 );
 
+CREATE INDEX product_index ON reviews(product_id);
+CREATE INDEX photos_index ON photos(review_id);
+CREATE INDEX char_index ON characteristics(product_id);
+CREATE INDEX char_reviews_index ON characteristic_reviews(characteristic_id);
+CREATE INDEX char_reviews_reviews ON characteristic_reviews(review_id);
+
+
 
