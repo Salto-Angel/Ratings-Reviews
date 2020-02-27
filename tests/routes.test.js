@@ -119,220 +119,211 @@ afterEach(() => {
 
 // Get a list of reviews for a product
 describe('GET reviews list', () => {
-  it('should return results', () => {
-    return request(app)
-      .get('/reviews/1/list')
-      .then(res => {
-        expect(res.statusCode).toBe(200);
-      });
+  it('should return results', async () => {
+    let response = await request(app).get('/reviews/1/list');
+    expect(response.statusCode).toBe(200);
   });
-  it('should return the correct product_id', () => {
-    return request(app)
-      .get('/reviews/1/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('product');
-        expect(res.body.product).toBe('1');
-      });
+  it('should return the correct product_id', async () => {
+    let response = await request(app).get('/reviews/1/list');
+
+    expect(response.body).toHaveProperty('product');
+    expect(response.body.product).toBe('1');
   });
-  it('should return the correct page number', () => {
-    return request(app)
-      .get('/reviews/1/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('page');
-        expect(res.body.page).toBe(0);
-      });
+  it('should return the correct page number', async () => {
+    let response = await request(app).get('/reviews/1/list');
+
+    expect(response.body).toHaveProperty('page');
+    expect(response.body.page).toBe(0);
   });
-  it('should return the correct result count', () => {
-    return request(app)
-      .get('/reviews/1/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('count');
-        expect(res.body.count).toBe(5);
-      });
+  it('should return the correct result count', async () => {
+    let response = await request(app).get('/reviews/1/list');
+
+    expect(response.body).toHaveProperty('count');
+    expect(response.body.count).toBe(5);
   });
-  it('should return an array of reviews', () => {
-    return request(app)
-      .get('/reviews/1/list')
-      .then(res => {
-        expect(res.body).toHaveProperty('results');
-        expect(Array.isArray(res.body.results)).toBe(true);
-      });
+  it('should return an array of reviews', async () => {
+    let response = await request(app).get('/reviews/1/list');
+
+    expect(response.body).toHaveProperty('results');
+    expect(Array.isArray(response.body.results)).toBe(true);
   });
-  it('should display an empty array if there are no reviews', () => {
-    return request(app)
-      .get('/reviews/3/list')
-      .then(res => {
-        expect(res.body.results.length).toBe(0);
-      });
+  it('should display an empty array if there are no reviews', async () => {
+    let response = await request(app).get('/reviews/-1/list');
+
+    expect(response.body.results.length).toBe(0);
   });
-  it('should display the correct review properties, if there are any reviews', () => {
-    return request(app)
-      .get('/reviews/1/list')
-      .then(res => {
-        expect(res.body.results[0]).toEqual(
-          expect.objectContaining({
-            review_id: expect.any(Number),
-            rating: expect.any(Number),
-            summary: expect.any(String),
-            recommend: expect.any(Number),
-            response: expect.any(String),
-            body: expect.any(String),
-            date: expect.any(String),
-            reviewer_name: expect.any(String),
-            helpfulness: expect.any(Number),
-            photos: expect.any(Array)
-          })
-        );
-      });
+  it('should display the correct review properties, if there are any reviews', async () => {
+    let response = await request(app).get('/reviews/1/list');
+    expect(response.body.results[0]).toEqual(
+      expect.objectContaining({
+        review_id: expect.any(Number),
+        rating: expect.any(Number),
+        summary: expect.any(String),
+        recommend: expect.any(Number),
+        response: expect.any(String),
+        body: expect.any(String),
+        date: expect.any(String),
+        reviewer_name: expect.any(String),
+        helpfulness: expect.any(Number),
+        photos: expect.any(Array)
+      })
+    );
   });
 });
 
 // Get the metadata for all the reviews for a product
 describe('GET meta data', () => {
-  it('should return results', () => {
-    return request(app)
-      .get('/reviews/1/meta')
-      .then(res => {
-        expect(res.statusCode).toBe(200);
-      });
-  });
-  it('should return the three requisite characteristics', () => {
-    return request(app)
-      .get('/reviews/1/meta')
-      .then(res => {
-        expect(res.body).toEqual(
-          expect.objectContaining({
-            ratings: expect.any(Object),
-            recommended: expect.any(Object),
-            characteristics: expect.any(Object)
-          })
-        );
-      });
-  });
-});
+  it('should return results', async () => {
+    let response = await request(app).get('/reviews/1/meta');
 
-// Add a review
-describe('POST a review', () => {
-  let reviewBody = {
-    rating: 3,
-    summary: 'This is another summary',
-    body: 'This is another body',
-    recommend: 0,
-    name: 'William',
-    email: 'William@William.com',
-    photos: ['www.photo.com', 'www.photo2.com'],
-    characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
-  };
-  it('should create a new review', () => {
-    return request(app)
-      .post('/reviews/1/')
-      .send(reviewBody)
-      .then(res => {
-        expect(res.statusCode).toBe(201);
-        expect(res.body[7].reviewer_name).toBe('William');
-      });
+    expect(response.statusCode).toBe(200);
   });
-  it('should create corresponding photos', () => {
-    return request(app)
-      .post('/reviews/1/')
-      .send(reviewBody)
-      .then(res => {
-        expect(res.body[0][0].url).toBe('www.photo.com');
-        expect(res.body[1][0].url).toBe('www.photo2.com');
-      });
-  });
-  it('should create corresponding characteristics', () => {
-    return request(app)
-      .post('/reviews/1/')
-      .send(reviewBody)
-      .then(res => {
-        expect(res.body[2][0].value).toBe(2);
-        expect(res.body[3][0].characteristic_id).toBe(7);
-      });
-  });
-});
+  it('should return the three requisite characteristics', async () => {
+    let response = await request(app).get('/reviews/1/meta');
 
-// Update a review's helpfulness
-describe('PUT helpfulness', () => {
-  it("should increment the review's helpfulness", () => {
-    let reviewBody = {
-      rating: 3,
-      summary: 'This is another summary',
-      body: 'This is another body',
-      recommend: 0,
-      name: 'William',
-      email: 'William@William.com',
-      photos: ['www.photo.com', 'www.photo2.com'],
-      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
-    };
-    return request(app)
-      .post('/reviews/1/')
-      .send(reviewBody)
-      .then(res => {
-        return request(app)
-          .put(`/reviews/helpful/${res.body[7].id}`)
-          .then(response => {
-            expect(response.body[0].helpfulness).toBe(
-              res.body[7].helpfulness + 1
-            );
-          });
-      });
-  });
-});
-
-// Report a review
-describe('PUT reported', () => {
-  it('should report the review', () => {
-    let reviewBody = {
-      rating: 3,
-      summary: 'This is another summary',
-      body: 'This is another body',
-      recommend: 0,
-      name: 'William',
-      email: 'William@William.com',
-      photos: ['www.photo.com', 'www.photo2.com'],
-      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
-    };
-    return request(app)
-      .post('/reviews/1/')
-      .send(reviewBody)
-      .then(res => {
-        return request(app)
-          .put(`/reviews/report/${res.body[7].id}`)
-          .then(response => {
-            expect(response.body[0].reported).toBe(1);
-          });
-      });
-  });
-
-  it('should not return a reported review', () => {
-    let reviewBody = {
-      rating: 3,
-      summary: 'This is another summary',
-      body: 'This is another body',
-      recommend: 0,
-      name: 'William',
-      email: 'William@William.com',
-      photos: ['www.photo.com', 'www.photo2.com'],
-      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
-    };
-    return request(app)
-      .post('/reviews/1/')
-      .send(reviewBody)
-      .then(res => {
-        return request(app)
-          .put(`/reviews/report/${res.body[7].id}`)
-          .then(() => {
-            request(app)
-              .get('/reviews/1/list')
-              .then(data => {
-                // expect(true).toBe(true);
-                expect(data.body.results.length).toBe(0);
-              })
-              .catch(err => console.log(err));
-          })
-          .catch(err => console.log('pls'));
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        ratings: expect.any(Object),
+        recommended: expect.any(Object),
+        characteristics: expect.any(Object)
       })
-      .catch(err => console.log('why'));
+    );
+  });
+
+  // Add a review
+  describe('POST a review', () => {
+    let reviewBody = {
+      rating: 3,
+      summary: 'This is another summary',
+      body: 'This is another body',
+      recommend: 0,
+      name: 'William',
+      email: 'William@William.com',
+      photos: ['www.photo.com', 'www.photo2.com'],
+      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+    };
+    it('should create a new review', async () => {
+      let response = await request(app)
+        .post('/reviews/1/')
+        .send(reviewBody);
+
+      expect(response.statusCode).toBe(201);
+      expect(response.body[0].reviewer_name).toBe('William');
+    });
+    it('should create corresponding photos', async () => {
+      let response = await request(app)
+        .post('/reviews/1/')
+        .send(reviewBody);
+
+      expect(response.body[1][0].url).toBe('www.photo.com');
+      expect(response.body[2][0].url).toBe('www.photo2.com');
+    });
+    it('should create corresponding characteristics', async () => {
+      let response = await request(app)
+        .post('/reviews/1/')
+        .send(reviewBody);
+
+      expect(response.body[3][0].value).toBe(2);
+      expect(response.body[4][0].characteristic_id).toBe(7);
+    });
+
+    it('should return status code 400 if incorrect body is provided', async () => {
+      let incompleteBody = {
+        name: 'Will'
+      };
+      let response = await request(app)
+        .post('/reviews/1/')
+        .send(incompleteBody);
+      expect(response.statusCode).toEqual(400);
+    });
+  });
+
+  // Update a review's helpfulness
+  describe('PUT helpfulness', () => {
+    it("should increment the review's helpfulness", async () => {
+      let reviewBody = {
+        rating: 3,
+        summary: 'This is another summary',
+        body: 'This is another body',
+        recommend: 0,
+        name: 'William',
+        email: 'William@William.com',
+        photos: ['www.photo.com', 'www.photo2.com'],
+        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+      };
+
+      // Post a new review
+      let postReview = await request(app)
+        .post('/reviews/1/')
+        .send(reviewBody);
+
+      // Update that review's helpfulness
+      let updateHelpful = await request(app).put(
+        `/reviews/helpful/${postReview.body[0].id}`
+      );
+
+      // Check that this update is reflected
+      expect(updateHelpful.body[0].helpfulness).toBe(
+        postReview.body[0].helpfulness + 1
+      );
+    });
+  });
+
+  // Report a review
+  describe('PUT reported', () => {
+    it('should report the review', async () => {
+      let reviewBody = {
+        rating: 3,
+        summary: 'This is another summary',
+        body: 'This is another body',
+        recommend: 0,
+        name: 'William',
+        email: 'William@William.com',
+        photos: ['www.photo.com', 'www.photo2.com'],
+        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+      };
+
+      // Post a new review
+      let postReview = await request(app)
+        .post('/reviews/1/')
+        .send(reviewBody);
+
+      // Update that review's helpfulness
+      let reportReview = await request(app).put(
+        `/reviews/report/${postReview.body[0].id}`
+      );
+
+      // Check that this update is reflected
+      expect(reportReview.body[0].reported).toBe(1);
+    });
+
+    it('should not return a reported review', async () => {
+      let reviewBody = {
+        rating: 3,
+        summary: 'This is another summary',
+        body: 'This is another body',
+        recommend: 0,
+        name: 'William',
+        email: 'William@William.com',
+        photos: ['www.photo.com', 'www.photo2.com'],
+        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+      };
+
+      // Post a new review
+      let postReview = await request(app)
+        .post('/reviews/1/')
+        .send(reviewBody);
+
+      // Update that review's helpfulness
+      let reportReview = await request(app).put(
+        `/reviews/report/${postReview.body[0].id}`
+      );
+
+      // Retrieve all reviews
+      let getReviews = await request(app).get('/reviews/1/list');
+
+      // Make sure the recently reported review is not present
+      expect(getReviews.body.results.length).toBe(1);
+    });
   });
 });

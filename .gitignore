@@ -2,3 +2,4 @@ node_modules
 *.csv
 server/database/reviews.sql
 package-lock.json
+coverage/
