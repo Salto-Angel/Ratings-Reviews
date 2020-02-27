@@ -85,7 +85,7 @@ module.exports = {
               task.any(addCharacteristics, [key, reviewID, value])
             );
           });
-          return Promise.all([...addPromises, data]);
+          return Promise.all([data].concat(addPromises));
         });
     });
   },

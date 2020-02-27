@@ -8,4 +8,5 @@ app.listen(port, err => {
   } else {
     console.log(`Connected to port ${port}`);
   }
+  let lol = 'lol';
 });

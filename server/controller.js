@@ -15,8 +15,8 @@ module.exports = {
         };
         res.json(resultObj);
       })
-      .catch(err => {
-        console.log(err, `Error getting reviews in server for ${productID}`);
+      .catch(() => {
+        res.sendStatus(500);
       });
   },
   getMeta: (req, res) => {
@@ -31,8 +31,8 @@ module.exports = {
         };
         res.json(finalObj);
       })
-      .catch(err => {
-        console.log(err, `Error getting meta in server for ${productID}`);
+      .catch(() => {
+        res.sendStatus(500);
       });
   },
   addReview: (req, res) => {
@@ -42,8 +42,8 @@ module.exports = {
       .then(result => {
         res.status(201).json(result);
       })
-      .catch(err => {
-        console.log(err, `Error adding review in server for ${productID}`);
+      .catch(() => {
+        res.sendStatus(400);
       });
   },
   setHelpful: (req, res) => {
@@ -53,11 +53,8 @@ module.exports = {
       .then(result => {
         res.status(201).json(result);
       })
-      .catch(err => {
-        console.log(
-          err,
-          `Error updating helpfulness in server for ${reviewID}`
-        );
+      .catch(() => {
+        res.sendStatus(500);
       });
   },
   reportReview: (req, res) => {
@@ -65,8 +62,8 @@ module.exports = {
     model
       .reportReview(reviewID)
       .then(result => res.status(201).json(result))
-      .catch(err => {
-        console.log(err, `Error reporting review in server for ${reviewID}`);
+      .catch(() => {
+        res.sendStatus(500);
       });
   }
 };

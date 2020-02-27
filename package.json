@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/server.js",
+    "test-coverage": "jest --coverage",
     "test": "jest",
     "test-watch": "jest --watch"
   },
