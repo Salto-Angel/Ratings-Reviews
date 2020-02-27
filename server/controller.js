@@ -39,7 +39,9 @@ module.exports = {
     const productID = req.params.product_id;
     model
       .addReview(req.body, productID)
-      .then(() => res.sendStatus(201))
+      .then(result => {
+        res.status(201).json(result);
+      })
       .catch(err => {
         console.log(err, `Error adding review in server for ${productID}`);
       });
@@ -48,7 +50,9 @@ module.exports = {
     const reviewID = req.params.review_id;
     model
       .setHelpful(reviewID)
-      .then(() => res.sendStatus(204))
+      .then(result => {
+        res.status(201).json(result);
+      })
       .catch(err => {
         console.log(
           err,
@@ -60,7 +64,7 @@ module.exports = {
     const reviewID = req.params.review_id;
     model
       .reportReview(reviewID)
-      .then(() => res.sendStatus(204))
+      .then(result => res.status(201).json(result))
       .catch(err => {
         console.log(err, `Error reporting review in server for ${reviewID}`);
       });

@@ -188,7 +188,7 @@ describe('GET reviews list', () => {
 });
 
 // Get the metadata for all the reviews for a product
-xdescribe('GET meta data', () => {
+describe('GET meta data', () => {
   it('should return results', () => {
     return request(app)
       .get('/reviews/1/meta')
@@ -212,10 +212,127 @@ xdescribe('GET meta data', () => {
 });
 
 // Add a review
-describe('POST a review', () => {});
+describe('POST a review', () => {
+  let reviewBody = {
+    rating: 3,
+    summary: 'This is another summary',
+    body: 'This is another body',
+    recommend: 0,
+    name: 'William',
+    email: 'William@William.com',
+    photos: ['www.photo.com', 'www.photo2.com'],
+    characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+  };
+  it('should create a new review', () => {
+    return request(app)
+      .post('/reviews/1/')
+      .send(reviewBody)
+      .then(res => {
+        expect(res.statusCode).toBe(201);
+        expect(res.body[7].reviewer_name).toBe('William');
+      });
+  });
+  it('should create corresponding photos', () => {
+    return request(app)
+      .post('/reviews/1/')
+      .send(reviewBody)
+      .then(res => {
+        expect(res.body[0][0].url).toBe('www.photo.com');
+        expect(res.body[1][0].url).toBe('www.photo2.com');
+      });
+  });
+  it('should create corresponding characteristics', () => {
+    return request(app)
+      .post('/reviews/1/')
+      .send(reviewBody)
+      .then(res => {
+        expect(res.body[2][0].value).toBe(2);
+        expect(res.body[3][0].characteristic_id).toBe(7);
+      });
+  });
+});
 
 // Update a review's helpfulness
-describe('PUT helpfulness', () => {});
+describe('PUT helpfulness', () => {
+  it("should increment the review's helpfulness", () => {
+    let reviewBody = {
+      rating: 3,
+      summary: 'This is another summary',
+      body: 'This is another body',
+      recommend: 0,
+      name: 'William',
+      email: 'William@William.com',
+      photos: ['www.photo.com', 'www.photo2.com'],
+      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+    };
+    return request(app)
+      .post('/reviews/1/')
+      .send(reviewBody)
+      .then(res => {
+        return request(app)
+          .put(`/reviews/helpful/${res.body[7].id}`)
+          .then(response => {
+            expect(response.body[0].helpfulness).toBe(
+              res.body[7].helpfulness + 1
+            );
+          });
+      });
+  });
+});
 
 // Report a review
-describe('POST reported', () => {});
+describe('PUT reported', () => {
+  it('should report the review', () => {
+    let reviewBody = {
+      rating: 3,
+      summary: 'This is another summary',
+      body: 'This is another body',
+      recommend: 0,
+      name: 'William',
+      email: 'William@William.com',
+      photos: ['www.photo.com', 'www.photo2.com'],
+      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+    };
+    return request(app)
+      .post('/reviews/1/')
+      .send(reviewBody)
+      .then(res => {
+        return request(app)
+          .put(`/reviews/report/${res.body[7].id}`)
+          .then(response => {
+            expect(response.body[0].reported).toBe(1);
+          });
+      });
+  });
+
+  it('should not return a reported review', () => {
+    let reviewBody = {
+      rating: 3,
+      summary: 'This is another summary',
+      body: 'This is another body',
+      recommend: 0,
+      name: 'William',
+      email: 'William@William.com',
+      photos: ['www.photo.com', 'www.photo2.com'],
+      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+    };
+    return request(app)
+      .post('/reviews/1/')
+      .send(reviewBody)
+      .then(res => {
+        return request(app)
+          .put(`/reviews/report/${res.body[7].id}`)
+          .then(() => {
+            request(app)
+              .get('/reviews/1/list')
+              .then(data => {
+                // expect(true).toBe(true);
+                expect(data.body.results.length).toBe(0);
+              })
+              .catch(err => console.log(err));
+          })
+          .catch(err => console.log('pls'));
+      })
+      .catch(err => console.log('why'));
+  });
+});

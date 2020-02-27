@@ -54,10 +54,11 @@ module.exports = {
   },
   addReview: (body, productID) => {
     let addReview =
-      'INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id';
-    let addPhotos = 'INSERT INTO photos(review_id, url) VALUES ($1, $2)';
+      'INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
+    let addPhotos =
+      'INSERT INTO photos(review_id, url) VALUES ($1, $2) RETURNING *';
     let addCharacteristics =
-      'INSERT INTO characteristic_reviews(characteristic_id, review_id, value) VALUES($1, $2, $3)';
+      'INSERT INTO characteristic_reviews(characteristic_id, review_id, value) VALUES($1, $2, $3) RETURNING *';
     return db.task(task => {
       return task
         .one(addReview, [
@@ -76,25 +77,28 @@ module.exports = {
         .then(data => {
           let reviewID = data.id;
           let photoAdditionPromises = body.photos
-            ? body.photos.map(photo => task.none(addPhotos, [reviewID, photo]))
+            ? body.photos.map(photo => task.any(addPhotos, [reviewID, photo]))
             : [];
           let addPromises = [...photoAdditionPromises];
           Object.entries(body.characteristics).forEach(([key, value]) => {
             addPromises.push(
-              task.none(addCharacteristics, [key, reviewID, value])
+              task.any(addCharacteristics, [key, reviewID, value])
             );
           });
-          return Promise.all(addPromises);
+          return Promise.all([...addPromises, data]);
         });
     });
   },
   setHelpful: reviewID => {
-    return db.none(
-      'UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = $1',
+    return db.any(
+      'UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = $1 RETURNING helpfulness',
       reviewID
     );
   },
   reportReview: reviewID => {
-    return db.none('UPDATE reviews SET reported = 1 WHERE id = $1', reviewID);
+    return db.any(
+      'UPDATE reviews SET reported = 1 WHERE id = $1 RETURNING reported',
+      reviewID
+    );
   }
 };
