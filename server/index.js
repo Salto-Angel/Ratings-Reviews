@@ -1,4 +1,5 @@
 const express = require('express');
+const redis = require('redis');
 
 const cors = require('cors');
 const morgan = require('morgan');
