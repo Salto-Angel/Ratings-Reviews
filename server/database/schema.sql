@@ -44,5 +44,10 @@ CREATE INDEX char_index ON characteristics(product_id);
 CREATE INDEX char_reviews_index ON characteristic_reviews(characteristic_id);
 CREATE INDEX char_reviews_reviews ON characteristic_reviews(review_id);
 
+SELECT setval('reviews_id_seq', (SELECT MAX(id) FROM reviews));
+SELECT setval('photos_id_seq', (SELECT MAX(id) FROM photos));
+SELECT setval('characteristics_id_seq', (SELECT MAX(id) FROM characteristics));
+SELECT setval('characteristic_reviews_id_seq', (SELECT MAX(id) FROM characteristic_reviews));
+
 
 

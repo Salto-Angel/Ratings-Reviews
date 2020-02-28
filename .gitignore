@@ -3,3 +3,5 @@ node_modules
 server/database/reviews.sql
 package-lock.json
 coverage/
+docker-compose.yml
+.env

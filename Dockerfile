@@ -7,6 +7,8 @@ WORKDIR /usr/src/app
 # copy . (all in the current directory) to . (WORKDIR)
 COPY . .
 
+RUN npm install
+
 # the port we wish to expose
 EXPOSE 12345
 
