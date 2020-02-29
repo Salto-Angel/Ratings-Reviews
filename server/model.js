@@ -1,8 +1,18 @@
 const db = require('./database/postgres.js'); //Postgres
 module.exports = {
   getReviewsList: (productID, page, count, sort) => {
-    let queryString = `SELECT reviews.id AS review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, (SELECT COALESCE(json_agg(photos), '[]') FROM (SELECT id, url FROM photos WHERE review_id = reviews.id ORDER BY id ASC) photos) AS photos FROM reviews WHERE id IN (SELECT id FROM reviews WHERE product_id = ${productID} AND reported = 0) ORDER BY ${sort} DESC LIMIT ${count} OFFSET ${page *
-      count}`;
+    if (sort === 'newest') {
+      sort = 'date';
+    } else if (sort === 'helpfulness' || sort === 'relevant') {
+      sort = 'helpfulness';
+    } else {
+      sort = 'No Sorting';
+    }
+    // let queryString = `SELECT reviews.id AS review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, (SELECT COALESCE(json_agg(photos), '[]') FROM (SELECT id, url FROM photos WHERE review_id = reviews.id ORDER BY id ASC) photos) AS photos FROM reviews WHERE id IN (SELECT id FROM reviews WHERE product_id = ${productID} AND reported = 0) ORDER BY ${sort} DESC LIMIT ${count} OFFSET ${page *
+    //   count}`;
+
+    let queryString = `SELECT reviews.id AS review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, (SELECT COALESCE(json_agg(photos), '[]') FROM (SELECT id, url FROM photos WHERE review_id = reviews.id ORDER BY id ASC) photos) AS photos FROM reviews WHERE id IN (SELECT id FROM reviews WHERE product_id = ${productID} AND reported = 0 AND id > ${page *
+      count}) ORDER BY ${sort} DESC LIMIT ${count} `;
     return db.any(queryString);
   },
   getMeta: productID => {
