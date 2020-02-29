@@ -9,7 +9,12 @@ const redisClient = redis.createClient(redis_port);
  To start Redis Server:
   - Open Ubuntu WSL
   - sudo service redis-server start
-*/
+  */
+
+redisClient.on('connect', function() {
+  console.log('Redis is connected');
+});
+
 redisClient.on('ready', function() {
   console.log('Redis is ready');
 });
