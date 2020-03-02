@@ -20,11 +20,11 @@ if (process.env.NODE_ENV === 'production') {
   };
 } else {
   connection = {
-    host: process.env.HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_DATABASE,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    host: process.env.HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_DATABASE || 'reviews',
+    user: process.env.DB_USER || 'wjl77',
+    password: process.env.DB_PASSWORD || 'password',
     max: 10
   };
 }
