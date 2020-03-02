@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'production') {
   };
 } else {
   connection = {
-    host: process.env.HOST || 'localhost',
+    host: process.env.HOST || '18.224.21.61',
     port: process.env.DB_PORT || 5432,
     database: process.env.DB_DATABASE || 'reviews',
     user: process.env.DB_USER || 'wjl77',
