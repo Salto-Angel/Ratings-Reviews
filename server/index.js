@@ -14,6 +14,9 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
+app.get('/loaderio-7b4882aff9643bdd6a7b8b70669624c3', (req, res) => {
+  res.send('loaderio-7b4882aff9643bdd6a7b8b70669624c3');
+});
 app.use('/reviews', routes);
 
 module.exports = app;
