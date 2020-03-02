@@ -25,7 +25,8 @@ if (process.env.NODE_ENV === 'production') {
     database: process.env.DB_DATABASE || 'reviews',
     user: process.env.DB_USER || 'wjl77',
     password: process.env.DB_PASSWORD || 'password',
-    max: 10
+    max: 10,
+    query_timeout: 4000
   };
 }
 
