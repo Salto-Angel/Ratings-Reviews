@@ -24,6 +24,7 @@ redisClient.on('error', function(err) {
 });
 
 app.listen(port, err => {
+  console.log('Environment: ', process.env.NODE_ENV);
   if (err) {
     console.log(`Error connecting to ${port}`, err);
   } else {
