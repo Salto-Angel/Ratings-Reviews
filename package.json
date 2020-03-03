@@ -4,7 +4,8 @@
   "description": "API for ratings and reviews",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/server.js",
+    "start": "node server/server.js",
+    "start-dev": "nodemon server/server.js",
     "test-coverage": "jest --coverage",
     "test": "jest",
     "test-watch": "jest --watch"
