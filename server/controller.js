@@ -4,6 +4,7 @@ module.exports = {
   getReviewsList: (req, res) => {
     const productID = req.params.product_id;
     const { page = 0, count = 5, sort = 'helpfulness' } = req.query;
+    console.log('Volume Test');
     model
       .getReviewsList(productID, page, count, sort)
       .then(reviews => {
