@@ -1,4 +1,29 @@
 const db = require('./database/postgres.js'); //Postgres
+const redis = require('redis');
+const { promisify } = require('bluebird');
+
+const redisClient = redis.createClient(6379);
+/*
+ To start Redis Server:
+  - Open Ubuntu WSL
+  - sudo service redis-server start
+  */
+redisClient.on('connect', function() {
+  console.log('Redis is connected');
+});
+
+redisClient.on('ready', function() {
+  console.log('Redis is ready');
+});
+
+redisClient.on('error', function(err) {
+  console.log('Something went wrong ', err);
+});
+
+const existsAsync = promisify(redisClient.exists).bind(redisClient);
+const getAsync = promisify(redisClient.get).bind(redisClient);
+const setAsync = promisify(redisClient.set).bind(redisClient);
+
 module.exports = {
   getReviewsList: (productID, page, count, sort) => {
     if (sort === 'newest') {
@@ -10,7 +35,6 @@ module.exports = {
     }
     // let queryString = `SELECT reviews.id AS review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, (SELECT COALESCE(json_agg(photos), '[]') FROM (SELECT id, url FROM photos WHERE review_id = reviews.id ORDER BY id ASC) photos) AS photos FROM reviews WHERE id IN (SELECT id FROM reviews WHERE product_id = ${productID} AND reported = 0) ORDER BY ${sort} DESC LIMIT ${count} OFFSET ${page *
     //   count}`;
-
     let queryString = `SELECT reviews.id AS review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, (SELECT COALESCE(json_agg(photos), '[]') FROM (SELECT id, url FROM photos WHERE review_id = reviews.id ORDER BY id ASC) photos) AS photos FROM reviews WHERE id IN (SELECT id FROM reviews WHERE product_id = ${productID} AND reported = 0 AND id > ${page *
       count}) ORDER BY ${sort} DESC LIMIT ${count} `;
     return db.any(queryString);
@@ -34,33 +58,43 @@ module.exports = {
     // let charQuery =
     //   'SELECT c.id, name, SUM(value) as SUM, COUNT(value) as COUNT FROM characteristics c INNER JOIN characteristic_reviews cr ON c.id = cr.characteristic_id WHERE c.product_id = $1 GROUP BY c.id, name ORDER BY c.id ASC';
 
-    return Promise.all([
-      db.any(ratingsCount, productID).then(meta => {
-        let returnObj = {};
-        meta.forEach(rating => {
-          returnObj[rating.rating] = Number(rating.count);
+    return existsAsync(productID).then(exists => {
+      if (exists === 1) {
+        return getAsync(productID).then(reply => {
+          return JSON.parse(reply);
         });
-        return returnObj;
-      }),
-      db.any(recommendCount, productID).then(meta => {
-        let returnObj = {};
-        meta.forEach(recommend => {
-          returnObj[recommend.recommend] = Number(recommend.count);
+      } else {
+        return Promise.all([
+          db.any(ratingsCount, productID).then(meta => {
+            let returnObj = {};
+            meta.forEach(rating => {
+              returnObj[rating.rating] = Number(rating.count);
+            });
+            return returnObj;
+          }),
+          db.any(recommendCount, productID).then(meta => {
+            let returnObj = {};
+            meta.forEach(recommend => {
+              returnObj[recommend.recommend] = Number(recommend.count);
+            });
+            return returnObj;
+          }),
+          db.any(charQuery, productID).then(meta => {
+            let avgMap = [];
+            meta.forEach(char => {
+              avgMap.push({
+                id: char.id,
+                name: char.name,
+                value: (Number(char.sum) / Number(char.count)).toFixed(4)
+              });
+            });
+            return avgMap;
+          })
+        ]).then(results => {
+          setAsync(productID, JSON.stringify(results));
         });
-        return returnObj;
-      }),
-      db.any(charQuery, productID).then(meta => {
-        let avgMap = [];
-        meta.forEach(char => {
-          avgMap.push({
-            id: char.id,
-            name: char.name,
-            value: (Number(char.sum) / Number(char.count)).toFixed(4)
-          });
-        });
-        return avgMap;
-      })
-    ]);
+      }
+    });
   },
   addReview: (body, productID) => {
     let addReview =

@@ -1,5 +1,7 @@
 version: '3.7'
 services:
+  redis:
+    image: 'redis:alpine'
   ratings-reviews:
     build:
       context: ./server
@@ -8,15 +10,8 @@ services:
       - 12345:12345
     command: bash -c 'while ! nc -z reviews-db 5435; do sleep 1; done; npm start'
     depends_on:
-      - reviews-db
+      - redis
     environment:
       - DATABASE_URL=postgres://postgres:password:5435/reviews
       - PORT=12345
       - NODE_ENV=production
-  reviews-db:
-    image: postgres
-    ports:
-      - 5435:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
