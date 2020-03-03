@@ -1,27 +1,28 @@
 const app = require('./index');
-const redis = require('redis');
+// const redis = require('redis');
 
-const redis_port = process.env.PORT || 6379;
+// const redis_port = process.env.PORT || 6379;
 const port = process.env.PORT || 12345;
 
-const redisClient = redis.createClient(redis_port);
-/*
- To start Redis Server:
-  - Open Ubuntu WSL
-  - sudo service redis-server start
-  */
+// const redisClient = redis.createClient(redis_port);
+// /*
+//  To start Redis Server:
+//   - Open Ubuntu WSL
+//   - sudo service redis-server start
+//   */
 
-redisClient.on('connect', function() {
-  console.log('Redis is connected');
-});
+// module.exports = { lol: 'lol' };
+// redisClient.on('connect', function() {
+//   console.log('Redis is connected');
+// });
 
-redisClient.on('ready', function() {
-  console.log('Redis is ready');
-});
+// redisClient.on('ready', function() {
+//   console.log('Redis is ready');
+// });
 
-redisClient.on('error', function(err) {
-  console.log('Something went wrong ', err);
-});
+// redisClient.on('error', function(err) {
+//   console.log('Something went wrong ', err);
+// });
 
 app.listen(port, err => {
   console.log('Environment: ', process.env.NODE_ENV);
