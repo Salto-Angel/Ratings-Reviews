@@ -2,7 +2,7 @@ const db = require('./database/postgres.js'); //Postgres
 const redis = require('redis');
 const { promisify } = require('bluebird');
 
-const redisClient = redis.createClient(6379);
+const redisClient = redis.createClient(process.env.REDIS_PORT || 6379);
 /*
  To start Redis Server:
   - Open Ubuntu WSL
