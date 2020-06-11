@@ -3,56 +3,56 @@ const app = require('../server/index');
 const db = require('../server/database/postgres');
 
 // Set up build/teardown processes
-// beforeAll(() => {
-//   // Create the requisite tables in reviews_test
-//   return Promise.all([
-//     // For each table, create the table then create the requisite indexes
-//     // REVIEWS
-//     db
-//       .query(
-//         'CREATE TABLE reviews (id SERIAL PRIMARY KEY, product_id INT NOT NULL,rating INT NOT NULL,date DATE NOT NULL,summary VARCHAR(555) NOT NULL,body VARCHAR(555) NOT NULL,recommend INT NOT NULL,reported INT NOT NULL,reviewer_name VARCHAR(255) NOT NULL,reviewer_email VARCHAR(255) NOT NULL,response VARCHAR(555) NOT NULL,helpfulness INT NOT NULL)'
-//       )
-//       .then(() => {
-//         db.query('CREATE INDEX product_index ON reviews(product_id)');
-//       }),
+beforeAll(() => {
+  // Create the requisite tables in reviews_test
+  return Promise.all([
+    // For each table, create the table then create the requisite indexes
+    // REVIEWS
+    db
+      .query(
+        'CREATE TABLE reviews (id SERIAL PRIMARY KEY, product_id INT NOT NULL,rating INT NOT NULL,date DATE NOT NULL,summary VARCHAR(555) NOT NULL,body VARCHAR(555) NOT NULL,recommend INT NOT NULL,reported INT NOT NULL,reviewer_name VARCHAR(255) NOT NULL,reviewer_email VARCHAR(255) NOT NULL,response VARCHAR(555) NOT NULL,helpfulness INT NOT NULL)'
+      )
+      .then(() => {
+        db.query('CREATE INDEX product_index ON reviews(product_id)');
+      }),
 
-//     // PHOTOS
-//     db
-//       .query(
-//         'CREATE TABLE photos (id SERIAL PRIMARY KEY,review_id INT REFERENCES reviews(id) NOT NULL,url VARCHAR(255) NOT NULL)'
-//       )
-//       .then(() => {
-//         db.query('CREATE INDEX photos_index ON photos(review_id)');
-//       }),
+    // PHOTOS
+    db
+      .query(
+        'CREATE TABLE photos (id SERIAL PRIMARY KEY,review_id INT REFERENCES reviews(id) NOT NULL,url VARCHAR(255) NOT NULL)'
+      )
+      .then(() => {
+        db.query('CREATE INDEX photos_index ON photos(review_id)');
+      }),
 
-//     // CHARACTERISTICS
-//     db
-//       .query(
-//         'CREATE TABLE characteristics (id SERIAL PRIMARY KEY, product_id INT NOT NULL, name VARCHAR(30) NOT NULL )'
-//       )
-//       .then(() => {
-//         db.query('CREATE INDEX char_index ON characteristics(product_id)');
-//       }),
+    // CHARACTERISTICS
+    db
+      .query(
+        'CREATE TABLE characteristics (id SERIAL PRIMARY KEY, product_id INT NOT NULL, name VARCHAR(30) NOT NULL )'
+      )
+      .then(() => {
+        db.query('CREATE INDEX char_index ON characteristics(product_id)');
+      }),
 
-//     // CHARACTERISTIC REVIEWS
-//     db
-//       .query(
-//         'CREATE TABLE characteristic_reviews (id SERIAL PRIMARY KEY,characteristic_id INT NOT NULL, review_id INT NOT NULL, value INT NOT NULL)'
-//       )
-//       .then(() => {
-//         Promise.all([
-//           db.query(
-//             'CREATE INDEX char_reviews_index ON characteristic_reviews(characteristic_id)'
-//           ),
-//           db.query(
-//             'CREATE INDEX char_reviews_reviews ON characteristic_reviews(review_id)'
-//           )
-//         ]);
-//       })
-//   ]).then(() => {
-//     db.end();
-//   });
-// });
+    // CHARACTERISTIC REVIEWS
+    db
+      .query(
+        'CREATE TABLE characteristic_reviews (id SERIAL PRIMARY KEY,characteristic_id INT NOT NULL, review_id INT NOT NULL, value INT NOT NULL)'
+      )
+      .then(() => {
+        Promise.all([
+          db.query(
+            'CREATE INDEX char_reviews_index ON characteristic_reviews(characteristic_id)'
+          ),
+          db.query(
+            'CREATE INDEX char_reviews_reviews ON characteristic_reviews(review_id)'
+          ),
+        ]);
+      }),
+  ]).then(() => {
+    db.end();
+  });
+});
 
 beforeEach(() => {
   // Add a few reviews
@@ -71,13 +71,13 @@ beforeEach(() => {
           'Will',
           'Will@Will.com',
           '',
-          0
+          0,
         ]
       )
-      .then(results => {
+      .then((results) => {
         db.query('INSERT INTO photos(review_id, url) VALUES ($1, $2)', [
           results[0].id,
-          'www.photos.com'
+          'www.photos.com',
         ]);
       }),
     Promise.all([
@@ -92,8 +92,8 @@ beforeEach(() => {
       ),
       db.query(
         'INSERT INTO characteristic_reviews(characteristic_id, review_id, value) VALUES(4, 1, 3)'
-      )
-    ])
+      ),
+    ]),
   ]);
 });
 
@@ -102,20 +102,20 @@ afterEach(() => {
     db.query('DELETE FROM photos'),
     db.query('DELETE FROM characteristic_reviews'),
     db.query('DELETE FROM characteristics'),
-    db.query('DELETE FROM reviews')
+    db.query('DELETE FROM reviews'),
   ]);
 });
 
-// afterAll(() => {
-//   return Promise.all([
-//     db.query('DROP TABLE photos'),
-//     db.query('DROP TABLE characteristics'),
-//     db.query('DROP TABLE characteristic_reviews'),
-//     db.query('DROP TABLE reviews')
-//   ]).then(() => {
-//     db.end();
-//   });
-// });
+afterAll(() => {
+  return Promise.all([
+    db.query('DROP TABLE photos'),
+    db.query('DROP TABLE characteristics'),
+    db.query('DROP TABLE characteristic_reviews'),
+    db.query('DROP TABLE reviews'),
+  ]).then(() => {
+    db.end();
+  });
+});
 
 // Get a list of reviews for a product
 describe('GET reviews list', () => {
@@ -165,7 +165,7 @@ describe('GET reviews list', () => {
         date: expect.any(String),
         reviewer_name: expect.any(String),
         helpfulness: expect.any(Number),
-        photos: expect.any(Array)
+        photos: expect.any(Array),
       })
     );
   });
@@ -185,7 +185,7 @@ describe('GET meta data', () => {
       expect.objectContaining({
         ratings: expect.any(Object),
         recommended: expect.any(Object),
-        characteristics: expect.any(Object)
+        characteristics: expect.any(Object),
       })
     );
   });
@@ -200,28 +200,22 @@ describe('GET meta data', () => {
       name: 'William',
       email: 'William@William.com',
       photos: ['www.photo.com', 'www.photo2.com'],
-      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+      characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 },
     };
     it('should create a new review', async () => {
-      let response = await request(app)
-        .post('/reviews/1/')
-        .send(reviewBody);
+      let response = await request(app).post('/reviews/1/').send(reviewBody);
 
       expect(response.statusCode).toBe(201);
       expect(response.body[0].reviewer_name).toBe('William');
     });
     it('should create corresponding photos', async () => {
-      let response = await request(app)
-        .post('/reviews/1/')
-        .send(reviewBody);
+      let response = await request(app).post('/reviews/1/').send(reviewBody);
 
       expect(response.body[1][0].url).toBe('www.photo.com');
       expect(response.body[2][0].url).toBe('www.photo2.com');
     });
     it('should create corresponding characteristics', async () => {
-      let response = await request(app)
-        .post('/reviews/1/')
-        .send(reviewBody);
+      let response = await request(app).post('/reviews/1/').send(reviewBody);
 
       expect(response.body[3][0].value).toBe(2);
       expect(response.body[4][0].characteristic_id).toBe(7);
@@ -229,7 +223,7 @@ describe('GET meta data', () => {
 
     it('should return status code 400 if incorrect body is provided', async () => {
       let incompleteBody = {
-        name: 'Will'
+        name: 'Will',
       };
       let response = await request(app)
         .post('/reviews/1/')
@@ -249,13 +243,11 @@ describe('GET meta data', () => {
         name: 'William',
         email: 'William@William.com',
         photos: ['www.photo.com', 'www.photo2.com'],
-        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 },
       };
 
       // Post a new review
-      let postReview = await request(app)
-        .post('/reviews/1/')
-        .send(reviewBody);
+      let postReview = await request(app).post('/reviews/1/').send(reviewBody);
 
       // Update that review's helpfulness
       let updateHelpful = await request(app).put(
@@ -280,13 +272,11 @@ describe('GET meta data', () => {
         name: 'William',
         email: 'William@William.com',
         photos: ['www.photo.com', 'www.photo2.com'],
-        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 },
       };
 
       // Post a new review
-      let postReview = await request(app)
-        .post('/reviews/1/')
-        .send(reviewBody);
+      let postReview = await request(app).post('/reviews/1/').send(reviewBody);
 
       // Update that review's helpfulness
       let reportReview = await request(app).put(
@@ -306,13 +296,11 @@ describe('GET meta data', () => {
         name: 'William',
         email: 'William@William.com',
         photos: ['www.photo.com', 'www.photo2.com'],
-        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 }
+        characteristics: { '6': 2, '7': 3, '8': 1, '9': 2, '10': 4 },
       };
 
       // Post a new review
-      let postReview = await request(app)
-        .post('/reviews/1/')
-        .send(reviewBody);
+      let postReview = await request(app).post('/reviews/1/').send(reviewBody);
 
       // Update that review's helpfulness
       let reportReview = await request(app).put(
