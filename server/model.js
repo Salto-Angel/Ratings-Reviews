@@ -146,36 +146,6 @@ module.exports = {
     );
 
     return [addedReview, ...addPhotoPromises, ...addCharacteristicPromises];
-
-    return db.task((task) => {
-      return task
-        .one(addReview, [
-          productID,
-          body.rating,
-          body.date || new Date(),
-          body.summary,
-          body.body,
-          body.recommend,
-          0,
-          body.name,
-          body.email,
-          '',
-          0,
-        ])
-        .then((data) => {
-          let reviewID = data.id;
-          let photoAdditionPromises = body.photos
-            ? body.photos.map((photo) => task.any(addPhotos, [reviewID, photo]))
-            : [];
-          let addPromises = [...photoAdditionPromises];
-          Object.entries(body.characteristics).forEach(([key, value]) => {
-            addPromises.push(
-              task.any(addCharacteristics, [key, reviewID, value])
-            );
-          });
-          return Promise.all([data].concat(addPromises));
-        });
-    });
   },
   setHelpful: (reviewID) => {
     return db.any(

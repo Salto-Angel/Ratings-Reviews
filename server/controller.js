@@ -24,14 +24,6 @@ module.exports = {
     } catch (error) {
       res.sendStatus(500);
     }
-    // .then(results => {
-    //   let finalObj = {
-    //     ratings: results[0],
-    //     recommended: results[1],
-    //     characteristics: results[2]
-    //   };
-    //   res.json(finalObj);
-    // })
   },
   addReview: async (req, res) => {
     try {
@@ -41,9 +33,6 @@ module.exports = {
     } catch (error) {
       res.sendStatus(400);
     }
-    // .then((result) => {
-    //   res.status(201).json(result);
-    // })
   },
   setHelpful: (req, res) => {
     try {
@@ -54,10 +43,6 @@ module.exports = {
     } catch (error) {
       res.sendStatus(500);
     }
-
-    // .then((result) => {
-    //   res.status(201).json(result);
-    // })
   },
   reportReview: (req, res) => {
     try {
@@ -67,6 +52,5 @@ module.exports = {
     } catch (error) {
       res.sendStatus(500);
     }
-    // .then((result) => res.status(201).json(result))
   },
 };
