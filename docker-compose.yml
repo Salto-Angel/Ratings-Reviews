@@ -14,4 +14,5 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres:password:5435/reviews
       - PORT=12345
+      - REDIS_PORT=6379
       - NODE_ENV=production
